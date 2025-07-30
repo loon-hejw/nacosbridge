@@ -17,9 +17,7 @@ spec:
         component: controller
     spec:
       containers:
-      - args:
-        - --metrics-address=:8080
-        image: nacosbridge:latest
+      - image: nacosbridge:latest
         imagePullPolicy: Always
         name: manager
         ports:

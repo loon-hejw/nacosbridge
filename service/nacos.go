@@ -210,9 +210,7 @@ func (n *Nacos) generateNamespaceClient(namespace string) (naming_client.INaming
 		NamespaceId:         namespace,
 		TimeoutMs:           5000,
 		NotLoadCacheAtStart: true,
-		LogDir:              "/tmp/nacos/log",
-		CacheDir:            "/tmp/nacos/cache",
-		LogLevel:            "debug",
+		LogLevel:            "error",
 	}
 
 	if n.username != "" && n.password != "" {

@@ -27,7 +27,7 @@ func (c *Cache) Insert(obj interface{}) bool {
 
 	switch o := obj.(type) {
 	case *corev1.ConfigMap:
-		if o.Labels != nil && o.Labels["nacosbridge.io/config"] == "true" {
+		if o.Labels != nil && o.Labels[REGISTRY_CONFIG] == "true" {
 			c.configmaps[NamespacedName(o)] = o
 			return true
 		}

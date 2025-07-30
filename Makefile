@@ -1,5 +1,5 @@
 # Image URL to use all building/pushing image targets
-REGISTRY ?=harbor.bhidi.com/library/nacosbridge
+REGISTRY ?=harbor.bhidi.com/library
 CONTROLLER_GEN = bin/controller-gen
 NACOS_BRIDGE_VERSION = v1.0.0
 
@@ -34,7 +34,7 @@ test:
 
 .PHONY: install
 install: manifests
-	kubectl kustomize config | sed "s|CI_TAG|$(CI_TAG)|g" | sed "s|CI_REGISTRY|$(REGISTRY)|g" | kubectl create -f -
+	kubectl kustomize config | sed "s|CI_TAG|$(CI_TAG)|g" | sed "s|CI_REGISTRY|$(REGISTRY)|g" | kubectl apply -f -
 
 .PHONY: clean
 clean:
@@ -50,7 +50,7 @@ run: manifests generate fmt vet ## Run a controller from your host.
 
 .PHONY: docker
 docker: ## Build docker image with the manager.
-	docker build -t ${REGISTRY}/nacosbridge:${CI_TAG} .
+	docker build -t ${REGISTRY}/nacosbridge:${CI_TAG} -f config/docker/Dockerfile .
 
 .PHONY: docker-push
 docker-push: ## Push docker image with the manager.

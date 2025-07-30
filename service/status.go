@@ -134,7 +134,6 @@ func (suh *StatusUpdateHandler) Start(ctx context.Context) error {
 		case <-ctx.Done():
 			return nil
 		case upd := <-suh.updateChannel:
-			// log.Info("received a status update", "name", upd.NamespacedName.Name, "namespace", upd.NamespacedName.Namespace)
 			suh.apply(upd)
 		}
 	}

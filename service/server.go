@@ -105,7 +105,7 @@ func (s *Server) rebuild() error {
 
 	var config string
 	for _, c := range s.cache.configmaps {
-		if c.Labels != nil && c.Labels["nacosbridge.io/config"] == "true" {
+		if c.Labels != nil && c.Labels[REGISTRY_CONFIG] == "true" {
 			content, ok := c.Data["config.json"]
 			if !ok {
 				continue
@@ -130,18 +130,18 @@ func (s *Server) rebuild() error {
 		if svc.Labels == nil {
 			continue
 		}
-		if _, ok := svc.Labels["nacosbridge.io/service"]; !ok {
+		if _, ok := svc.Labels[REGISTRY_SERVICE_NAME]; !ok {
 			continue
 		}
 
 		mutator := func(obj client.Object) client.Object {
 			svc := obj.(*corev1.Service)
-			if svc.Labels == nil || svc.Labels["nacosbridge.io/external"] != "true" {
+			if svc.Labels == nil || svc.Labels[REGISTRY_SERVICE_EXTERNAL] != "true" {
 				return svc
 			}
 			cp := svc.DeepCopy()
 			for k, specPort := range cp.Spec.Ports {
-				nodePort, ok := svc.Labels["nacosbridge.io/nodeport-"+specPort.Name]
+				nodePort, ok := svc.Labels[REGISTRY_PORTNAME+specPort.Name]
 				if !ok {
 					continue
 				}
@@ -157,7 +157,6 @@ func (s *Server) rebuild() error {
 			if cp.Labels == nil {
 				cp.Labels = make(map[string]string)
 			}
-			cp.Labels["nacosbridge.io/spec-changed"] = "true"
 			cp.Spec.Type = corev1.ServiceTypeNodePort
 			return cp
 		}
@@ -181,7 +180,7 @@ func (s *Server) rebuild() error {
 				selectNamespace[n] = true
 			}
 		}
-		if err := sr.Config(GenerateServiceConfig(sr.Name(), registryConfig.ServiceConfig)); err != nil {
+		if err := sr.Config(GeneratePrefixConfig(sr.Name(), registryConfig.ServiceConfig)); err != nil {
 			s.logger.Error(err, "failed to config", "service", sr.Name())
 			continue
 		}
